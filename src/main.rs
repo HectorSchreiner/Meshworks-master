@@ -23,7 +23,7 @@ fn main() {
 
     let mut player = Player {
         fPlayerX: 4.0,
-        fPlayerY: 8.0,
+        fPlayerY: 4.0,
         fPlayerA: 0.0,
     };
 
@@ -35,7 +35,7 @@ fn main() {
 
         renderer.clear(Color::BLACK);
         player.move_angle(&window);
-        //player.move_player(&window);
+        player.move_player(&window);
         player.game(&mut renderer);
     }
 }
@@ -63,17 +63,27 @@ impl Player {
     }
 
     fn move_player(&mut self, window: &Window) {
-        // move player
+        let speed = 0.4;
+
+        if (window.is_key_down(Key::W)) {
+            self.fPlayerX += self.fPlayerA.sin() * speed;
+            self.fPlayerY += self.fPlayerA.cos() * speed;
+        }
+        if (window.is_key_down(Key::S)) {
+            self.fPlayerX += self.fPlayerA.sin() * speed;
+            self.fPlayerY += self.fPlayerA.cos() * speed;
+        }
     }
 
     fn game(&mut self, renderer: &mut Renderer) {
         let nMapHeight = 16;
-        let nMapWidth = 8;
+        let nMapWidth = 16;
 
         let fFOV = PI / 4.0;
         let fDepth = 16.0;
 
-        let mapString = String::from("11111111100000011000000110000001100000011000000110000001100000011000000110000001100000011000000110000001100000011000000111111111");
+        let mapString =
+            String::from("1111111111111111100000000000000110000000000000011000000000000001100000000000000110000000000000011000000000000001100000000000000110000000000000011000000000000001100000000000000110000000000000011000000000000001100000000000000110000000000000011111111111111111");
 
         let mapCode: Vec<_> = mapString.chars().collect();
 
@@ -96,8 +106,8 @@ impl Player {
 
                 // test om ray er out of bounds
                 if nTestX < 0 || nTestX >= nMapWidth || nTestY < 0 || nTestY >= nMapHeight {
-                    bHitWall = true; // bare sæt distance til max depth
                     fDistanceToWall = fDepth;
+                    continue; // bare sæt distance til max depth
                 } else {
                     {
                         if mapCode[((nTestY - 1) * nMapWidth + nTestX) as usize] == '1' {
